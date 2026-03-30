@@ -369,10 +369,18 @@
 
     <div class="flex flex-col gap-4">
 
-      <div class="glass glass-hover rounded-xl overflow-hidden">
-        <video class="w-full h-36 object-cover" autoplay loop muted playsinline>
-          <source src="furniture.mp4" type="video/mp4" />
-        </video>
+      <!-- Project 1 -->
+      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('furniture.mp4')">
+        <div class="relative w-full h-36 bg-black">
+          <video class="w-full h-full object-cover" muted preload="metadata" id="thumb1">
+            <source src="furniture.mp4#t=0.5" type="video/mp4" />
+          </video>
+          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
+            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
         <div class="px-5 py-4 flex items-center justify-between">
           <div>
             <div class="font-semibold text-white text-sm">Furniture Store</div>
@@ -382,10 +390,18 @@
         </div>
       </div>
 
-      <div class="glass glass-hover rounded-xl overflow-hidden">
-        <video class="w-full h-36 object-cover" autoplay loop muted playsinline>
-          <source src="cakeshop.mp4" type="video/mp4" />
-        </video>
+      <!-- Project 2 -->
+      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('cakeshop.mp4')">
+        <div class="relative w-full h-36 bg-black">
+          <video class="w-full h-full object-cover" muted preload="metadata">
+            <source src="cakeshop.mp4#t=0.5" type="video/mp4" />
+          </video>
+          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
+            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
         <div class="px-5 py-4 flex items-center justify-between">
           <div>
             <div class="font-semibold text-white text-sm">Cake Shop</div>
@@ -395,14 +411,24 @@
         </div>
       </div>
 
-      <div class="glass glass-hover rounded-xl overflow-hidden">
-        <img src="https://placehold.co/560x240/0f2015/22c55e?text=Fashion+E-commerce+Store" alt="Fashion E-commerce Store" class="w-full h-36 object-cover" />
+      <!-- Project 3 -->
+      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('foodapp.mp4')">
+        <div class="relative w-full h-36 bg-black">
+          <video class="w-full h-full object-cover" muted preload="metadata">
+            <source src="foodapp.mp4#t=0.5" type="video/mp4" />
+          </video>
+          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
+            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
+              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
         <div class="px-5 py-4 flex items-center justify-between">
           <div>
-            <div class="font-semibold text-white text-sm">Fashion E-commerce Store</div>
-            <div class="text-gray-500 text-xs mt-0.5">Full store with cart & checkout</div>
+            <div class="font-semibold text-white text-sm">Food App</div>
+            <div class="text-gray-500 text-xs mt-0.5">Online food ordering platform</div>
           </div>
-          <span class="badge">E-commerce</span>
+          <span class="badge">App</span>
         </div>
       </div>
 
@@ -562,6 +588,40 @@
       © 2026 <span class="text-gray-500">Jovan Špinjo</span> · Web Designer & Developer
     </p>
   </footer>
+
+  <!-- VIDEO MODAL -->
+  <div id="videoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="closeModal()">
+    <div class="relative w-full max-w-lg mx-4" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white text-sm font-medium flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        Close
+      </button>
+      <video id="modalVideo" class="w-full rounded-2xl" controls>
+        <source id="modalSource" src="" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <script>
+    function openModal(src) {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      const source = document.getElementById('modalSource');
+      source.src = src;
+      video.load();
+      video.play();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+    function closeModal() {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      video.pause();
+      video.currentTime = 0;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  </script>
 
 </body>
 </html>
