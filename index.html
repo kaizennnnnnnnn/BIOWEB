@@ -8,601 +8,750 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    * { font-family: 'Inter', sans-serif; }
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      background-color: #0a0a0f;
-      background-image:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(120, 60, 255, 0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(30, 100, 255, 0.10) 0%, transparent 50%);
+      background-color: #050508;
+      overflow-x: hidden;
     }
 
+    /* ══════ ANIMATED BACKGROUND ══════ */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% -15%, rgba(120, 60, 255, 0.20) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 35% at 85% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 10% 60%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+      animation: meshShift 12s ease-in-out infinite alternate;
+    }
+    @keyframes meshShift {
+      0% { opacity: 0.8; filter: hue-rotate(0deg); }
+      50% { opacity: 1; filter: hue-rotate(8deg); }
+      100% { opacity: 0.85; filter: hue-rotate(-5deg); }
+    }
+
+    /* Noise grain overlay */
+    .noise::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.025;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    }
+
+    .content-wrapper { position: relative; z-index: 2; }
+
+    /* ══════ GRADIENT TEXT ══════ */
     .gradient-text {
-      background: linear-gradient(135deg, #a855f7, #6366f1, #3b82f6);
+      background: linear-gradient(135deg, #c084fc, #818cf8, #60a5fa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .gradient-border {
-      background: linear-gradient(135deg, #a855f7, #6366f1, #3b82f6);
-      padding: 2px;
+    /* ══════ ANIMATED AVATAR RING ══════ */
+    .avatar-ring {
+      padding: 3px;
       border-radius: 9999px;
+      background: conic-gradient(from var(--angle, 0deg), #a855f7, #6366f1, #3b82f6, #a855f7);
+      animation: spin-ring 4s linear infinite;
+    }
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes spin-ring {
+      to { --angle: 360deg; }
     }
 
+    /* ══════ GLASS ══════ */
     .glass {
-      background: rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px) saturate(1.2);
+      -webkit-backdrop-filter: blur(16px) saturate(1.2);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .glass-hover {
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-hover:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(168, 85, 247, 0.35);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(120, 60, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(168, 85, 247, 0.3);
+      transform: translateY(-3px);
+      box-shadow:
+        0 12px 40px rgba(120, 60, 255, 0.12),
+        0 0 0 1px rgba(168, 85, 247, 0.15) inset;
     }
 
+    /* ══════ BUTTONS ══════ */
     .btn-gradient {
       background: linear-gradient(135deg, #a855f7, #6366f1);
-      transition: all 0.3s ease;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25);
     }
     .btn-gradient:hover {
       background: linear-gradient(135deg, #9333ea, #4f46e5);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 30px rgba(168, 85, 247, 0.45);
     }
 
     .btn-outline {
-      border: 1px solid rgba(168, 85, 247, 0.5);
-      transition: all 0.3s ease;
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .btn-outline:hover {
       background: rgba(168, 85, 247, 0.1);
-      border-color: rgba(168, 85, 247, 0.8);
-      transform: translateY(-2px);
+      border-color: rgba(168, 85, 247, 0.7);
+      transform: translateY(-2px) scale(1.02);
       box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
     }
 
+    /* ══════ LINK CARDS ══════ */
     .link-card {
-      transition: all 0.25s ease;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
     }
+    .link-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #a855f7, #6366f1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .link-card:hover::before { opacity: 1; }
     .link-card:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(168, 85, 247, 0.4);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(168, 85, 247, 0.35);
       transform: translateX(4px);
+      box-shadow: 0 8px 32px rgba(120, 60, 255, 0.1);
     }
 
+    /* ══════ PRICING ══════ */
     .pricing-highlight {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(99, 102, 241, 0.15));
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      box-shadow: 0 0 40px rgba(120, 60, 255, 0.12);
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(99, 102, 241, 0.12));
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      box-shadow: 0 0 60px rgba(120, 60, 255, 0.1);
+      position: relative;
+    }
+    .pricing-highlight::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from var(--angle, 0deg), transparent 40%, rgba(168,85,247,0.5), transparent 60%);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      animation: spin-ring 6s linear infinite;
+      pointer-events: none;
     }
 
+    /* ══════ STAT NUMBERS ══════ */
     .stat-number {
-      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      background: linear-gradient(135deg, #c084fc, #60a5fa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
+    /* ══════ SERVICE ICON ══════ */
     .service-icon {
       width: 44px;
       height: 44px;
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(99, 102, 241, 0.2));
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(99, 102, 241, 0.15));
+      border: 1px solid rgba(168, 85, 247, 0.25);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       overflow: hidden;
+      transition: all 0.3s ease;
     }
-
+    .glass-hover:hover .service-icon,
+    .link-card:hover .service-icon {
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.2);
+    }
     .service-icon img {
       width: 100%;
       height: 100%;
       object-fit: contain;
     }
 
+    /* ══════ BADGE ══════ */
     .badge {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(99, 102, 241, 0.25));
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(99, 102, 241, 0.2));
+      border: 1px solid rgba(168, 85, 247, 0.25);
       color: #c4b5fd;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
       border-radius: 9999px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
 
+    /* ══════ SECTION DIVIDER ══════ */
     .section-divider {
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+      background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.25), transparent);
     }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #0a0a0f; }
-    ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.4); border-radius: 4px; }
+    /* ══════ PLAY BUTTON PULSE ══════ */
+    .play-btn {
+      transition: all 0.3s ease;
+    }
+    .play-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+    }
+    @keyframes play-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(168, 85, 247, 0); }
+    }
+    .play-pulse { animation: play-pulse 2.5s ease-in-out infinite; }
 
+    /* ══════ SCROLL ANIMATIONS ══════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ══════ AVATAR ══════ */
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
+      50% { transform: translateY(-8px); }
     }
-    .avatar-float { animation: float 4s ease-in-out infinite; }
+    .avatar-float { animation: float 5s ease-in-out infinite; }
 
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); }
-      50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
+      0%, 100% { box-shadow: 0 0 12px rgba(74, 222, 128, 0.4); }
+      50% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.7); }
     }
     .online-dot { animation: pulse-glow 2s ease-in-out infinite; }
+
+    /* ══════ CTA GLOW ══════ */
+    .cta-glow {
+      position: relative;
+    }
+    .cta-glow::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(168,85,247,0.3), rgba(99,102,241,0.1), rgba(168,85,247,0.3));
+      filter: blur(20px);
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    /* ══════ SCROLLBAR ══════ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #050508; }
+    ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.4); border-radius: 4px; }
+
+    /* ══════ MODAL ══════ */
+    .modal-enter { animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
   </style>
 </head>
-<body class="min-h-screen text-white">
+<body class="min-h-screen text-white noise">
 
-  <!-- ═══════════════════════ HERO ═══════════════════════ -->
-  <section class="max-w-lg mx-auto px-5 pt-16 pb-10 text-center">
+  <!-- Animated background -->
+  <div class="bg-mesh"></div>
 
-    <!-- Avatar -->
-    <div class="avatar-float inline-block mb-5">
-      <div class="gradient-border inline-block">
-        <div class="w-24 h-24 rounded-full overflow-hidden">
-          <img src="me.jpeg" alt="Jovan Špinjo" class="w-full h-full object-cover" />
-        </div>
-      </div>
-      <!-- Online indicator -->
-      <div class="relative -mt-4 flex justify-end mr-1">
-        <div class="online-dot w-4 h-4 bg-green-400 rounded-full border-2 border-[#0a0a0f]"></div>
-      </div>
-    </div>
+  <div class="content-wrapper">
 
-    <!-- Name & title -->
-    <h1 class="text-3xl font-bold tracking-tight mb-1">
-      Jovan <span class="gradient-text">Špinjo</span>
-    </h1>
-    <p class="text-gray-400 font-medium mb-3">Web Designer & Developer</p>
-    <p class="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto mb-6">
-      I build modern, fast and functional websites for businesses and entrepreneurs. Let's make it work.
-    </p>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <section class="max-w-lg mx-auto px-5 pt-20 pb-12 text-center">
 
-    <!-- Social quick links -->
-    <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
-      <a href="https://www.instagram.com/jovan_1_5" target="_blank"
-         class="glass btn-outline flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-purple-300 hover:text-white">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-        @jovan_1_5
-      </a>
-      <a href="https://wa.me/381640178000" target="_blank"
-         class="glass btn-outline flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-green-400 hover:text-white">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-        WhatsApp
-      </a>
-      <a href="mailto:jocaspinjo@gmail.com"
-         class="glass btn-outline flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-blue-400 hover:text-white">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        Email
-      </a>
-    </div>
-
-  </section>
-
-  <!-- ═══════════════════════ STATS ═══════════════════════ -->
-  <section class="max-w-lg mx-auto px-5 mb-10">
-    <div class="glass rounded-2xl px-6 py-5 grid grid-cols-3 divide-x divide-white/10 text-center">
-      <div class="px-4">
-        <div class="stat-number text-3xl font-black">30+</div>
-        <div class="text-gray-500 text-xs mt-1 font-medium uppercase tracking-wider">Projects</div>
-      </div>
-      <div class="px-4">
-        <div class="stat-number text-3xl font-black">40+</div>
-        <div class="text-gray-500 text-xs mt-1 font-medium uppercase tracking-wider">Happy Clients</div>
-      </div>
-      <div class="px-4">
-        <div class="stat-number text-3xl font-black">3+</div>
-        <div class="text-gray-500 text-xs mt-1 font-medium uppercase tracking-wider">Years Exp.</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="section-divider max-w-lg mx-auto mb-10"></div>
-
-  <!-- ═══════════════════════ QUICK LINKS ═══════════════════════ -->
-  <section class="max-w-lg mx-auto px-5 mb-10">
-    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4 text-center">Quick Links</h2>
-    <div class="flex flex-col gap-3">
-
-      <a href="https://asevin.netlify.app/" target="_blank" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group">
-        <div class="flex items-center gap-3">
-          <div class="service-icon"><img src="paint.png" alt="Portfolio" /></div>
-          <div>
-            <div class="font-semibold text-white text-sm">Portfolio</div>
-            <div class="text-gray-500 text-xs">My website — work & info</div>
+      <!-- Avatar -->
+      <div class="avatar-float inline-block mb-6 reveal">
+        <div class="avatar-ring inline-block">
+          <div class="w-28 h-28 rounded-full overflow-hidden bg-[#050508]">
+            <img src="me.jpeg" alt="Jovan Špinjo" class="w-full h-full object-cover" />
           </div>
         </div>
-        <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-
-      <a href="#portfolio" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group">
-        <div class="flex items-center gap-3">
-          <div class="service-icon"><img src="glass.png" alt="Quick look" /></div>
-          <div>
-            <div class="font-semibold text-white text-sm">Quick Look at My Work</div>
-            <div class="text-gray-500 text-xs">Project previews below</div>
-          </div>
-        </div>
-        <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-
-      <a href="#services" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group">
-        <div class="flex items-center gap-3">
-          <div class="service-icon"><img src="case.png" alt="Services" /></div>
-          <div>
-            <div class="font-semibold text-white text-sm">Services</div>
-            <div class="text-gray-500 text-xs">What I can do for you</div>
-          </div>
-        </div>
-        <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-
-      <a href="#pricing" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group">
-        <div class="flex items-center gap-3">
-          <div class="service-icon"><img src="bag.png" alt="Pricing" /></div>
-          <div>
-            <div class="font-semibold text-white text-sm">Pricing</div>
-            <div class="text-gray-500 text-xs">Transparent packages</div>
-          </div>
-        </div>
-        <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-
-      <a href="#contact" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group">
-        <div class="flex items-center gap-3">
-          <div class="service-icon"><img src="letter.png" alt="Book a Call" /></div>
-          <div>
-            <div class="font-semibold text-white text-sm">Book a Free Call</div>
-            <div class="text-gray-500 text-xs">Let's talk about your project</div>
-          </div>
-        </div>
-        <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </a>
-
-    </div>
-  </section>
-
-  <div class="section-divider max-w-lg mx-auto mb-10"></div>
-
-  <!-- ═══════════════════════ SERVICES ═══════════════════════ -->
-  <section id="services" class="max-w-lg mx-auto px-5 mb-10">
-    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1 text-center">What I Offer</h2>
-    <h3 class="text-xl font-bold text-white text-center mb-6">Services</h3>
-
-    <div class="grid grid-cols-1 gap-3">
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="monitor.png" alt="Web Design & Development" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">Web Design & Development</div>
-          <div class="text-gray-500 text-xs leading-relaxed">Custom websites built from scratch — responsive, fast, and tailored to your brand.</div>
+        <!-- Online indicator -->
+        <div class="relative -mt-5 flex justify-end mr-2">
+          <div class="online-dot w-4 h-4 bg-green-400 rounded-full border-[3px] border-[#050508]"></div>
         </div>
       </div>
 
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="rocket.png" alt="Landing Pages" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">Landing Pages</div>
-          <div class="text-gray-500 text-xs leading-relaxed">High-converting single-page sites designed to capture leads and drive sales.</div>
-        </div>
-      </div>
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="cart.png" alt="E-commerce Stores" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">E-commerce Stores</div>
-          <div class="text-gray-500 text-xs leading-relaxed">Full online shops with product management, payments, and smooth checkout flow.</div>
-        </div>
-      </div>
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="pen.png" alt="Website Redesign" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">Website Redesign</div>
-          <div class="text-gray-500 text-xs leading-relaxed">Transform your outdated site into a modern, professional online presence.</div>
-        </div>
-      </div>
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="lighning.png" alt="Speed Optimization" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">Speed Optimization</div>
-          <div class="text-gray-500 text-xs leading-relaxed">Boost your site's performance — faster load times, better Core Web Vitals scores.</div>
-        </div>
-      </div>
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="lupa.png" alt="SEO Basics" /></div>
-        <div>
-          <div class="font-semibold text-white text-sm mb-0.5">SEO Basics</div>
-          <div class="text-gray-500 text-xs leading-relaxed">On-page SEO setup so Google can find and rank your site from day one.</div>
-        </div>
-      </div>
-
-      <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4">
-        <div class="service-icon mt-0.5"><img src="shield.png" alt="Website Maintenance" /></div>
-        <div>
-          <div class="flex items-center gap-2 mb-0.5">
-            <div class="font-semibold text-white text-sm">Website Maintenance</div>
-            <span class="badge">Monthly</span>
-          </div>
-          <div class="text-gray-500 text-xs leading-relaxed">Hosting, backups, security updates, and content changes — so you never have to worry.</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <div class="section-divider max-w-lg mx-auto mb-10"></div>
-
-  <!-- ═══════════════════════ PORTFOLIO ═══════════════════════ -->
-  <section id="portfolio" class="max-w-lg mx-auto px-5 mb-10">
-    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1 text-center">My Work</h2>
-    <h3 class="text-xl font-bold text-white text-center mb-6">Portfolio</h3>
-
-    <div class="flex flex-col gap-4">
-
-      <!-- Project 1 -->
-      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('furniture.mp4')">
-        <div class="relative w-full h-36 bg-black">
-          <video class="w-full h-full object-cover" muted preload="metadata" id="thumb1">
-            <source src="furniture.mp4#t=0.5" type="video/mp4" />
-          </video>
-          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
-            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
-              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div class="px-5 py-4 flex items-center justify-between">
-          <div>
-            <div class="font-semibold text-white text-sm">Furniture Store</div>
-            <div class="text-gray-500 text-xs mt-0.5">Interior design & e-commerce</div>
-          </div>
-          <span class="badge">Web</span>
-        </div>
-      </div>
-
-      <!-- Project 2 -->
-      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('cakeshop.mp4')">
-        <div class="relative w-full h-36 bg-black">
-          <video class="w-full h-full object-cover" muted preload="metadata">
-            <source src="cakeshop.mp4#t=0.5" type="video/mp4" />
-          </video>
-          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
-            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
-              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div class="px-5 py-4 flex items-center justify-between">
-          <div>
-            <div class="font-semibold text-white text-sm">Cake Shop</div>
-            <div class="text-gray-500 text-xs mt-0.5">Bakery website & online orders</div>
-          </div>
-          <span class="badge">Landing</span>
-        </div>
-      </div>
-
-      <!-- Project 3 -->
-      <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer" onclick="openModal('foodapp.mp4')">
-        <div class="relative w-full h-36 bg-black">
-          <video class="w-full h-full object-cover" muted preload="metadata">
-            <source src="foodapp.mp4#t=0.5" type="video/mp4" />
-          </video>
-          <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all">
-            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center border border-white/30">
-              <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            </div>
-          </div>
-        </div>
-        <div class="px-5 py-4 flex items-center justify-between">
-          <div>
-            <div class="font-semibold text-white text-sm">Food App</div>
-            <div class="text-gray-500 text-xs mt-0.5">Online food ordering platform</div>
-          </div>
-          <span class="badge">App</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="text-center mt-5">
-      <a href="#contact" class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
-        View all projects
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-        </svg>
-      </a>
-    </div>
-  </section>
-
-  <div class="section-divider max-w-lg mx-auto mb-10"></div>
-
-  <!-- ═══════════════════════ PRICING ═══════════════════════ -->
-  <section id="pricing" class="max-w-lg mx-auto px-5 mb-10">
-    <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1 text-center">Transparent Pricing</h2>
-    <h3 class="text-xl font-bold text-white text-center mb-2">Packages</h3>
-    <p class="text-gray-500 text-xs text-center mb-6">All prices include design + development. No hidden fees.</p>
-
-    <div class="flex flex-col gap-4">
-
-      <!-- Starter -->
-      <div class="glass glass-hover rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">Starter</div>
-            <div class="text-2xl font-black text-white">From €150</div>
-          </div>
-          <div class="service-icon"><img src="rocket.png" alt="Starter" /></div>
-        </div>
-        <div class="text-purple-300 font-semibold text-sm mb-4">Landing Page</div>
-        <ul class="space-y-2.5 text-sm text-gray-400">
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Responsive design</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Up to 5 sections</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Contact form</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 1 revision round</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Delivery in 7 days</li>
-        </ul>
-      </div>
-
-      <!-- Pro (highlighted) -->
-      <div class="pricing-highlight rounded-2xl p-6 relative">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span class="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-bold px-4 py-1 rounded-full">⭐ Most Popular</span>
-        </div>
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-purple-400 text-xs font-medium uppercase tracking-wider mb-1">Pro</div>
-            <div class="text-2xl font-black text-white">From €350</div>
-          </div>
-          <div class="service-icon"><img src="case.png" alt="Pro" /></div>
-        </div>
-        <div class="text-purple-300 font-semibold text-sm mb-4">Business Website</div>
-        <ul class="space-y-2.5 text-sm text-gray-300">
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Starter</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Up to 10 pages</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> SEO basics included</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Google Analytics setup</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 3 revision rounds</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Delivery in 14 days</li>
-        </ul>
-      </div>
-
-      <!-- Premium -->
-      <div class="glass glass-hover rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">Premium</div>
-            <div class="text-2xl font-black text-white">From €600</div>
-          </div>
-          <div class="service-icon"><img src="cart.png" alt="Premium" /></div>
-        </div>
-        <div class="text-purple-300 font-semibold text-sm mb-4">E-commerce Store</div>
-        <ul class="space-y-2.5 text-sm text-gray-400">
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Full online store</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Payment integration</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Admin panel</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Unlimited revisions</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Delivery in 21 days</li>
-        </ul>
-      </div>
-
-      <!-- Maintenance -->
-      <div class="glass glass-hover rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div class="text-gray-400 text-xs font-medium uppercase tracking-wider mb-1">Maintenance</div>
-            <div class="text-2xl font-black text-white">From €49<span class="text-base font-medium text-gray-500">/mo</span></div>
-          </div>
-          <div class="service-icon"><img src="shield.png" alt="Maintenance" /></div>
-        </div>
-        <div class="text-purple-300 font-semibold text-sm mb-4">Website Care Plan</div>
-        <ul class="space-y-2.5 text-sm text-gray-400">
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Hosting & domain management</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Weekly backups</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Security monitoring</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Monthly content updates</li>
-          <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Priority support</li>
-        </ul>
-      </div>
-
-    </div>
-  </section>
-
-  <div class="section-divider max-w-lg mx-auto mb-10"></div>
-
-  <!-- ═══════════════════════ CTA / CONTACT ═══════════════════════ -->
-  <section id="contact" class="max-w-lg mx-auto px-5 mb-16">
-    <div class="glass rounded-3xl p-8 text-center" style="background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(99,102,241,0.08)); border: 1px solid rgba(168,85,247,0.2);">
-
-      <div class="flex justify-center mb-4">
-        <div class="w-16 h-16 rounded-2xl overflow-hidden" style="border: 1px solid rgba(168,85,247,0.3);">
-          <img src="letter.png" alt="Contact" class="w-full h-full object-contain" />
-        </div>
-      </div>
-      <h3 class="text-2xl font-bold text-white mb-2">Start Your Project Today</h3>
-      <p class="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs mx-auto">
-        Got an idea? Let's build it. Book a free 30-min consultation — no strings attached.
+      <!-- Name & title -->
+      <h1 class="text-4xl font-extrabold tracking-tight mb-2 reveal reveal-delay-1">
+        Jovan <span class="gradient-text">Špinjo</span>
+      </h1>
+      <p class="text-gray-400 font-medium text-lg mb-3 reveal reveal-delay-2">Web Designer & Developer</p>
+      <p class="text-gray-500 text-sm leading-relaxed max-w-sm mx-auto mb-8 reveal reveal-delay-3">
+        I build modern, fast and functional websites for businesses and entrepreneurs. Let's make it work.
       </p>
 
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="https://wa.me/381640178000" target="_blank"
-           class="btn-gradient flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-white text-sm">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Message on WhatsApp
-        </a>
+      <!-- Social quick links -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-2 reveal reveal-delay-4">
         <a href="https://www.instagram.com/jovan_1_5" target="_blank"
-           class="btn-outline glass flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-purple-300 text-sm">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+           class="glass btn-outline flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-purple-300 hover:text-white">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
           </svg>
-          DM on Instagram
+          @jovan_1_5
+        </a>
+        <a href="https://wa.me/381640178000" target="_blank"
+           class="glass btn-outline flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-green-400 hover:text-white">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          WhatsApp
         </a>
         <a href="mailto:jocaspinjo@gmail.com"
-           class="btn-outline glass flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-blue-300 text-sm">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           class="glass btn-outline flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-blue-400 hover:text-white">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
-          Send Email
+          Email
         </a>
       </div>
 
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
-  <footer class="max-w-lg mx-auto px-5 pb-10 text-center">
-    <div class="section-divider mb-6"></div>
-    <p class="text-gray-600 text-xs">
-      © 2026 <span class="text-gray-500">Jovan Špinjo</span> · Web Designer & Developer
-    </p>
-  </footer>
+    <!-- ═══════════════════════ STATS ═══════════════════════ -->
+    <section class="max-w-lg mx-auto px-5 mb-12 reveal">
+      <div class="glass rounded-2xl px-6 py-6 grid grid-cols-3 divide-x divide-white/10 text-center">
+        <div class="px-4">
+          <div class="stat-number text-4xl font-black" data-target="30">0</div>
+          <div class="text-gray-500 text-[10px] mt-1.5 font-semibold uppercase tracking-widest">Projects</div>
+        </div>
+        <div class="px-4">
+          <div class="stat-number text-4xl font-black" data-target="40">0</div>
+          <div class="text-gray-500 text-[10px] mt-1.5 font-semibold uppercase tracking-widest">Happy Clients</div>
+        </div>
+        <div class="px-4">
+          <div class="stat-number text-4xl font-black" data-target="3">0</div>
+          <div class="text-gray-500 text-[10px] mt-1.5 font-semibold uppercase tracking-widest">Years Exp.</div>
+        </div>
+      </div>
+    </section>
 
-  <!-- VIDEO MODAL -->
-  <div id="videoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm" onclick="closeModal()">
-    <div class="relative w-full max-w-lg mx-4" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="absolute -top-10 right-0 text-white/70 hover:text-white text-sm font-medium flex items-center gap-1">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <div class="section-divider max-w-lg mx-auto mb-12"></div>
+
+    <!-- ═══════════════════════ QUICK LINKS ═══════════════════════ -->
+    <section class="max-w-lg mx-auto px-5 mb-12">
+      <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-5 text-center reveal">Quick Links</h2>
+      <div class="flex flex-col gap-3">
+
+        <a href="https://asevin.netlify.app/" target="_blank" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group reveal reveal-delay-1">
+          <div class="flex items-center gap-3">
+            <div class="service-icon"><img src="paint.png" alt="Portfolio" /></div>
+            <div>
+              <div class="font-semibold text-white text-sm">Portfolio</div>
+              <div class="text-gray-500 text-xs">My website — work & info</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#portfolio" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group reveal reveal-delay-2">
+          <div class="flex items-center gap-3">
+            <div class="service-icon"><img src="glass.png" alt="Quick look" /></div>
+            <div>
+              <div class="font-semibold text-white text-sm">Quick Look at My Work</div>
+              <div class="text-gray-500 text-xs">Project previews below</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#services" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group reveal reveal-delay-3">
+          <div class="flex items-center gap-3">
+            <div class="service-icon"><img src="case.png" alt="Services" /></div>
+            <div>
+              <div class="font-semibold text-white text-sm">Services</div>
+              <div class="text-gray-500 text-xs">What I can do for you</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#pricing" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group reveal reveal-delay-3">
+          <div class="flex items-center gap-3">
+            <div class="service-icon"><img src="bag.png" alt="Pricing" /></div>
+            <div>
+              <div class="font-semibold text-white text-sm">Pricing</div>
+              <div class="text-gray-500 text-xs">Transparent packages</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+        <a href="#contact" class="link-card glass rounded-xl px-5 py-4 flex items-center justify-between group reveal reveal-delay-4">
+          <div class="flex items-center gap-3">
+            <div class="service-icon"><img src="letter.png" alt="Book a Call" /></div>
+            <div>
+              <div class="font-semibold text-white text-sm">Book a Free Call</div>
+              <div class="text-gray-500 text-xs">Let's talk about your project</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-gray-600 group-hover:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+
+      </div>
+    </section>
+
+    <div class="section-divider max-w-lg mx-auto mb-12"></div>
+
+    <!-- ═══════════════════════ SERVICES ═══════════════════════ -->
+    <section id="services" class="max-w-lg mx-auto px-5 mb-12">
+      <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1 text-center reveal">What I Offer</h2>
+      <h3 class="text-2xl font-extrabold text-white text-center mb-8 reveal">Services</h3>
+
+      <div class="grid grid-cols-1 gap-3">
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="monitor.png" alt="Web Design & Development" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">Web Design & Development</div>
+            <div class="text-gray-500 text-xs leading-relaxed">Custom websites built from scratch — responsive, fast, and tailored to your brand.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="rocket.png" alt="Landing Pages" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">Landing Pages</div>
+            <div class="text-gray-500 text-xs leading-relaxed">High-converting single-page sites designed to capture leads and drive sales.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="cart.png" alt="E-commerce Stores" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">E-commerce Stores</div>
+            <div class="text-gray-500 text-xs leading-relaxed">Full online shops with product management, payments, and smooth checkout flow.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="pen.png" alt="Website Redesign" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">Website Redesign</div>
+            <div class="text-gray-500 text-xs leading-relaxed">Transform your outdated site into a modern, professional online presence.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="lighning.png" alt="Speed Optimization" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">Speed Optimization</div>
+            <div class="text-gray-500 text-xs leading-relaxed">Boost your site's performance — faster load times, better Core Web Vitals scores.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="lupa.png" alt="SEO Basics" /></div>
+          <div>
+            <div class="font-semibold text-white text-sm mb-0.5">SEO Basics</div>
+            <div class="text-gray-500 text-xs leading-relaxed">On-page SEO setup so Google can find and rank your site from day one.</div>
+          </div>
+        </div>
+
+        <div class="glass glass-hover rounded-xl px-5 py-4 flex items-start gap-4 reveal">
+          <div class="service-icon mt-0.5"><img src="shield.png" alt="Website Maintenance" /></div>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <div class="font-semibold text-white text-sm">Website Maintenance</div>
+              <span class="badge">Monthly</span>
+            </div>
+            <div class="text-gray-500 text-xs leading-relaxed">Hosting, backups, security updates, and content changes — so you never have to worry.</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-divider max-w-lg mx-auto mb-12"></div>
+
+    <!-- ═══════════════════════ PORTFOLIO ═══════════════════════ -->
+    <section id="portfolio" class="max-w-lg mx-auto px-5 mb-12">
+      <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1 text-center reveal">My Work</h2>
+      <h3 class="text-2xl font-extrabold text-white text-center mb-8 reveal">Portfolio</h3>
+
+      <div class="flex flex-col gap-4">
+
+        <!-- Project 1 -->
+        <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer reveal" onclick="openModal('furniture.mp4')">
+          <div class="relative w-full h-44 bg-black/50">
+            <video class="w-full h-full object-cover" muted preload="metadata">
+              <source src="furniture.mp4#t=0.5" type="video/mp4" />
+            </video>
+            <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all duration-300">
+              <div class="play-btn play-pulse w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25">
+                <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-white text-sm">Furniture Store</div>
+              <div class="text-gray-500 text-xs mt-0.5">Interior design & e-commerce</div>
+            </div>
+            <span class="badge">Web</span>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer reveal" onclick="openModal('cakeshop.mp4')">
+          <div class="relative w-full h-44 bg-black/50">
+            <video class="w-full h-full object-cover" muted preload="metadata">
+              <source src="cakeshop.mp4#t=0.5" type="video/mp4" />
+            </video>
+            <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all duration-300">
+              <div class="play-btn play-pulse w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25">
+                <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-white text-sm">Cake Shop</div>
+              <div class="text-gray-500 text-xs mt-0.5">Bakery website & online orders</div>
+            </div>
+            <span class="badge">Landing</span>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="glass glass-hover rounded-xl overflow-hidden cursor-pointer reveal" onclick="openModal('foodapp.mp4')">
+          <div class="relative w-full h-44 bg-black/50">
+            <video class="w-full h-full object-cover" muted preload="metadata">
+              <source src="foodapp.mp4#t=0.5" type="video/mp4" />
+            </video>
+            <div class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/10 transition-all duration-300">
+              <div class="play-btn play-pulse w-14 h-14 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/25">
+                <svg class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="px-5 py-4 flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-white text-sm">Food App</div>
+              <div class="text-gray-500 text-xs mt-0.5">Online food ordering platform</div>
+            </div>
+            <span class="badge">App</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="text-center mt-6 reveal">
+        <a href="#contact" class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 text-sm font-semibold transition-colors">
+          View all projects
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <div class="section-divider max-w-lg mx-auto mb-12"></div>
+
+    <!-- ═══════════════════════ PRICING ═══════════════════════ -->
+    <section id="pricing" class="max-w-lg mx-auto px-5 mb-12">
+      <h2 class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1 text-center reveal">Transparent Pricing</h2>
+      <h3 class="text-2xl font-extrabold text-white text-center mb-2 reveal">Packages</h3>
+      <p class="text-gray-500 text-xs text-center mb-8 reveal">All prices include design + development. No hidden fees.</p>
+
+      <div class="flex flex-col gap-4">
+
+        <!-- Starter -->
+        <div class="glass glass-hover rounded-2xl p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Starter</div>
+              <div class="text-3xl font-black text-white">€150<span class="text-sm font-medium text-gray-500 ml-1">+</span></div>
+            </div>
+            <div class="service-icon"><img src="rocket.png" alt="Starter" /></div>
+          </div>
+          <div class="text-purple-300 font-semibold text-sm mb-4">Landing Page</div>
+          <ul class="space-y-2.5 text-sm text-gray-400">
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Responsive design</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Up to 5 sections</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Contact form</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> 1 revision round</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Delivery in 7 days</li>
+          </ul>
+        </div>
+
+        <!-- Pro (highlighted) -->
+        <div class="pricing-highlight rounded-2xl p-6 relative reveal">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span class="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-bold px-5 py-1.5 rounded-full shadow-lg shadow-purple-500/30 uppercase tracking-wider">Most Popular</span>
+          </div>
+          <div class="flex items-center justify-between mb-4 mt-2">
+            <div>
+              <div class="text-purple-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pro</div>
+              <div class="text-3xl font-black text-white">€350<span class="text-sm font-medium text-gray-500 ml-1">+</span></div>
+            </div>
+            <div class="service-icon"><img src="case.png" alt="Pro" /></div>
+          </div>
+          <div class="text-purple-300 font-semibold text-sm mb-4">Business Website</div>
+          <ul class="space-y-2.5 text-sm text-gray-300">
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Everything in Starter</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Up to 10 pages</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> SEO basics included</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Google Analytics setup</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> 3 revision rounds</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Delivery in 14 days</li>
+          </ul>
+        </div>
+
+        <!-- Premium -->
+        <div class="glass glass-hover rounded-2xl p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Premium</div>
+              <div class="text-3xl font-black text-white">€600<span class="text-sm font-medium text-gray-500 ml-1">+</span></div>
+            </div>
+            <div class="service-icon"><img src="cart.png" alt="Premium" /></div>
+          </div>
+          <div class="text-purple-300 font-semibold text-sm mb-4">E-commerce Store</div>
+          <ul class="space-y-2.5 text-sm text-gray-400">
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Everything in Pro</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Full online store</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Payment integration</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Admin panel</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Unlimited revisions</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Delivery in 21 days</li>
+          </ul>
+        </div>
+
+        <!-- Maintenance -->
+        <div class="glass glass-hover rounded-2xl p-6 reveal">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <div class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Maintenance</div>
+              <div class="text-3xl font-black text-white">€49<span class="text-sm font-medium text-gray-500 ml-1">/mo</span></div>
+            </div>
+            <div class="service-icon"><img src="shield.png" alt="Maintenance" /></div>
+          </div>
+          <div class="text-purple-300 font-semibold text-sm mb-4">Website Care Plan</div>
+          <ul class="space-y-2.5 text-sm text-gray-400">
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Hosting & domain management</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Weekly backups</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Security monitoring</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Monthly content updates</li>
+            <li class="flex items-center gap-2.5"><span class="text-green-400 text-xs">&#10003;</span> Priority support</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-divider max-w-lg mx-auto mb-12"></div>
+
+    <!-- ═══════════════════════ CTA / CONTACT ═══════════════════════ -->
+    <section id="contact" class="max-w-lg mx-auto px-5 mb-16 reveal">
+      <div class="cta-glow glass rounded-3xl p-10 text-center" style="background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(99,102,241,0.06)); border: 1px solid rgba(168,85,247,0.2);">
+
+        <div class="flex justify-center mb-5">
+          <div class="w-16 h-16 rounded-2xl overflow-hidden service-icon" style="width: 56px; height: 56px; border-radius: 16px;">
+            <img src="letter.png" alt="Contact" class="w-full h-full object-contain" />
+          </div>
+        </div>
+        <h3 class="text-2xl font-extrabold text-white mb-3">Start Your Project Today</h3>
+        <p class="text-gray-400 text-sm leading-relaxed mb-8 max-w-xs mx-auto">
+          Got an idea? Let's build it. Book a free 30-min consultation — no strings attached.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="https://wa.me/381640178000" target="_blank"
+             class="btn-gradient flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-white text-sm">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Message on WhatsApp
+          </a>
+          <a href="https://www.instagram.com/jovan_1_5" target="_blank"
+             class="btn-outline glass flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-purple-300 text-sm">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            DM on Instagram
+          </a>
+          <a href="mailto:jocaspinjo@gmail.com"
+             class="btn-outline glass flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-blue-300 text-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Send Email
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+    <footer class="max-w-lg mx-auto px-5 pb-12 text-center">
+      <div class="section-divider mb-6"></div>
+      <p class="text-gray-600 text-xs">
+        &copy; 2026 <span class="text-gray-500">Jovan Špinjo</span> &middot; Web Designer & Developer
+      </p>
+    </footer>
+
+  </div><!-- /content-wrapper -->
+
+  <!-- ═══════════════════════ VIDEO MODAL ═══════════════════════ -->
+  <div id="videoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md" onclick="closeModal()">
+    <div class="relative w-full max-w-lg mx-4 modal-enter" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute -top-12 right-0 text-white/60 hover:text-white text-sm font-medium flex items-center gap-1.5 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         Close
       </button>
-      <video id="modalVideo" class="w-full rounded-2xl" controls muted disableRemotePlayback>
+      <video id="modalVideo" class="w-full rounded-2xl shadow-2xl shadow-purple-500/10" controls muted disableRemotePlayback>
         <source id="modalSource" src="" type="video/mp4" />
       </video>
     </div>
   </div>
 
   <script>
+    /* ═══ VIDEO MODAL ═══ */
     function openModal(src) {
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
@@ -614,6 +763,7 @@
       video.play();
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
     }
     function closeModal() {
       const modal = document.getElementById('videoModal');
@@ -622,7 +772,45 @@
       video.currentTime = 0;
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+      document.body.style.overflow = '';
     }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    /* ═══ SCROLL REVEAL ═══ */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ═══ COUNTER ANIMATION ═══ */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseInt(el.dataset.target);
+          let current = 0;
+          const duration = 1800;
+          const step = target / (duration / 16);
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            el.textContent = Math.floor(current) + '+';
+          }, 16);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
   </script>
 
 </body>
